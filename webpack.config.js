@@ -3,11 +3,17 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const webpack = require('webpack')
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const ReactRefreshTypeScript = require('react-refresh-typescript');
 
 module.exports = {
   mode: 'development',
   entry: {
-    index: './src/index.tsx'
+    /**
+     * 借助 webpack-hot-middleware 实现 HMR
+     */
+    index: ['webpack-hot-middleware/client', './src/index.tsx']
   },
   module: {
     rules: [
@@ -17,6 +23,13 @@ module.exports = {
           {
             loader: 'ts-loader',
             options: {
+              /**
+               * react-refresh-typescript 配合 ts-loader 实现 react-refresh
+               * @returns 
+               */
+              getCustomTransformers: () => ({
+                before: ReactRefreshTypeScript,
+              }),
               transpileOnly: true
             }
           }
@@ -47,7 +60,15 @@ module.exports = {
       template: 'src/index.html'
     }),
     new MonacoWebpackPlugin(),
-    new ForkTsCheckerWebpackPlugin()
+    new ForkTsCheckerWebpackPlugin(),
+    /**
+     * 启用 hot-module-replacement plugin
+     */
+    new webpack.HotModuleReplacementPlugin(),
+    /**
+     * 启用 react-refresh-webpack-plugin 实现 react-refresh
+     */
+    new ReactRefreshWebpackPlugin(),
   ],
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.html']
@@ -58,7 +79,7 @@ module.exports = {
     publicPath: path.join(__dirname, 'dist'),
     compress: true,
     port: 9000,
-    hot: true,
+    hot: false,
     proxy: {
       '/api': 'http://localhost:3000'
     }

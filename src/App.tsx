@@ -61,7 +61,8 @@ const env = {
   copy: (content: string) => {
     copy(content);
     toast.success('内容已复制到粘贴板');
-  }
+  },
+  theme: 'cxd',
 
   // 后面这些接口可以不用实现
 
@@ -73,12 +74,12 @@ const env = {
   //   // 用来实现页面跳转, actionType:link、url 都会进来。
   // },
 
-  // updateLocation: (
-  //   location: string /*目标地址*/,
-  //   replace: boolean /*是replace，还是push？*/
-  // ) => {
-  //   // 地址替换，跟 jumpTo 类似
-  // },
+  updateLocation: (
+    location: string /*目标地址*/,
+    replace: boolean | undefined /*是replace，还是push？*/
+  ) => {
+    // 地址替换，跟 jumpTo 类似
+  },
 
   // isCurrentUrl: (
   //   url: string /*url地址*/,
@@ -103,36 +104,33 @@ class AMISComponent extends React.Component<any, any> {
     return renderAmis(
       // 这里是 amis 的 Json 配置。
       {
-        type: 'page',
-        body: {
-          type: 'form',
-          api: '/api/form',
-          body: [
-            {
-              type: 'input-text',
-              name: 'name',
-              label: '姓名'
+        "type": "page",
+        "data": {
+          "name": "zhangsan",
+          "age": 20
+        },
+        "body": [
+          {
+            "type": "tpl",
+            "tpl": "my name is ${name}"
+          },
+          {
+            "type": "service",
+            "data": {
+              "name": "lisi"
             },
-            {
-              name: 'email',
-              type: 'input-email',
-              label: '邮箱'
-            },
-            {
-              name: 'color',
-              type: 'input-color',
-              label: 'color'
-            },
-            {
-              type: 'editor',
-              name: 'editor',
-              label: '编辑器'
+            "body": {
+              "type": "tpl",
+              "tpl": "my name is ${name}, I'm ${age} years old"
             }
-          ]
-        }
+          }
+        ]
       },
       {
         // props...
+        data: {
+          username: 'amis',
+        },
       },
       env
     );
@@ -141,12 +139,26 @@ class AMISComponent extends React.Component<any, any> {
 
 class APP extends React.Component<any, any> {
   render() {
+    let amisScoped;
+    let theme = 'cxd';
+    let locale = 'zh-CN';
+
     return (
-      <>
-        <ToastComponent key="toast" position={'top-right'} />
-        <AlertComponent key="alert" />
+      <div>
+        <p>通过 amis 渲染页面</p>
+        <ToastComponent
+          theme={theme}
+          key="toast"
+          position={'top-right'}
+          locale={locale}
+        />
+        <AlertComponent
+          theme={theme}
+          key="alert"
+          locale={locale}
+        />
         <AMISComponent />
-      </>
+      </div>
     );
   }
 }
