@@ -106,23 +106,35 @@ class AMISComponent extends React.Component<any, any> {
       {
         "type": "page",
         "data": {
-          "name": "zhangsan",
-          "age": 20
+          "name": "<b>zhangsan</b>",
+          "age": 20,
+          "xxx": 2,
+          "items": [
+            "A",
+            "B",
+            "C"
+          ]
         },
         "body": [
           {
             "type": "tpl",
-            "tpl": "my name is ${name}"
+            "tpl": "<%= data.name %>"
           },
           {
             "type": "service",
             "data": {
               "name": "lisi"
             },
-            "body": {
-              "type": "tpl",
-              "tpl": "my name is ${name}, I'm ${age} years old"
-            }
+            "body": [
+              {
+                "type": "tpl",
+                "tpl": "my name is ${name}, I'm ${age} years old"
+              },
+              {
+                "type": "tpl",
+                "tpl": "<% if (data.items && data.items.length) { %>Array: <% data.items.forEach(function(item) { %> <span class='label label-default'><%= item %></span> <% });} %>"
+              }
+            ]
           }
         ]
       },
