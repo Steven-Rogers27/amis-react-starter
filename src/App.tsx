@@ -10,9 +10,13 @@ import 'amis/sdk/iconfont.css';
 import axios from 'axios';
 import copy from 'copy-to-clipboard';
 
-import {render as renderAmis, ToastComponent, AlertComponent} from 'amis';
+import {render as renderAmis, ToastComponent, AlertComponent, registerFilter} from 'amis';
 import {alert, confirm, toast} from 'amis-ui';
+import HelloWorld from './components/HelloWorld';
 
+registerFilter('my-replace', (input: string, search: string, replaceWith) => 
+  typeof input === 'string' ? input.replace(search, replaceWith) : input
+)
 // amis 环境配置
 const env = {
   // 下面三个接口必须实现
@@ -105,36 +109,25 @@ class AMISComponent extends React.Component<any, any> {
       // 这里是 amis 的 Json 配置。
       {
         "type": "page",
-        "data": {
-          "name": "<b>zhangsan</b>",
-          "age": 20,
-          "xxx": 2,
-          "items": [
-            "A",
-            "B",
-            "C"
-          ]
-        },
         "body": [
           {
-            "type": "tpl",
-            "tpl": "<%= data.name %>"
+            "type": "button",
+            "label": "按钮1",
+            "actionType": "dialog",
+            "dialog": {
+              "title": "弹框",
+              "body": "Hello World!"
+            }
           },
           {
-            "type": "service",
-            "data": {
-              "name": "lisi"
-            },
-            "body": [
-              {
-                "type": "tpl",
-                "tpl": "my name is ${name}, I'm ${age} years old"
-              },
-              {
-                "type": "tpl",
-                "tpl": "<% if (data.items && data.items.length) { %>Array: <% data.items.forEach(function(item) { %> <span class='label label-default'><%= item %></span> <% });} %>"
-              }
-            ]
+            "type": "button",
+            "label": "按钮2",
+            "className": "m-lg",
+            "actionType": "dialog",
+            "dialog": {
+              "title": "弹框",
+              "body": "Hello World!"
+            }
           }
         ]
       },
@@ -170,6 +163,7 @@ class APP extends React.Component<any, any> {
           locale={locale}
         />
         <AMISComponent />
+        <HelloWorld />
       </div>
     );
   }
